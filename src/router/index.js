@@ -65,9 +65,9 @@ export const constantRoutes = [
     children: [
       {
         path: 'index',
-        name: 'Form',
+        name: 'Employee',
         component: () => import('@/views/employee/index'),
-        meta: { title: '员工管理', icon: 'form' }
+        meta: { title: '员工管理', icon: 'user' }
       }
     ]
   },
@@ -78,9 +78,9 @@ export const constantRoutes = [
     children: [
       {
         path: 'index',
-        name: 'Form',
+        name: 'Classification',
         component: () => import('@/views/classification/index'),
-        meta: { title: '分类管理', icon: 'form' }
+        meta: { title: '分类管理', icon: 'el-icon-menu' }
       }
     ]
   },
@@ -91,9 +91,9 @@ export const constantRoutes = [
     children: [
       {
         path: 'menu',
-        name: 'Form',
+        name: 'Menu',
         component: () => import('@/views/menu/index'),
-        meta: { title: '菜品管理', icon: 'form' }
+        meta: { title: '菜品管理', icon: 'el-icon-dish-1' }
       }
     ]
   },
@@ -104,9 +104,9 @@ export const constantRoutes = [
     children: [
       {
         path: 'index',
-        name: 'Form',
+        name: 'Regular',
         component: () => import('@/views/regular/index'),
-        meta: { title: '套餐管理', icon: 'form' }
+        meta: { title: '套餐管理', icon: 'el-icon-present' }
       }
     ]
   },
@@ -117,7 +117,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'index',
-        name: 'Form',
+        name: 'Order',
         component: () => import('@/views/order/index'),
         meta: { title: '订单明细', icon: 'form' }
       }

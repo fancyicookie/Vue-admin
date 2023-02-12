@@ -5,8 +5,7 @@ import { resetRouter } from '@/router'
 const getDefaultState = () => {
   return {
     token: getToken(),
-    name: '',
-    avatar: ''
+    name: localStorage.getItem('name')
   }
 }
 
@@ -33,15 +32,18 @@ const actions = {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       // Promise 调用登录接口
-      login({ username: username.trim(), password: password }).then(() => {
+      login({ username: username.trim(), password: password }).then((response) => {
         // const { data } = response
         // 因为后端没有给token，所以这里给一个假的token值，用session进行验证
         const token = '111111'
         // vuex 存储的
         commit('SET_TOKEN', token)
+        commit('SET_NAME', response.data.name)
         // commit('SET_TOKEN', data.token)
         // 这里 token 存储在本地，localStorage
         setToken(token)
+        localStorage.setItem('name', response.data.name)
+
         resolve()
       }).catch(error => {
         reject(error)
