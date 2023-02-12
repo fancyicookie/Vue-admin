@@ -6,6 +6,7 @@
         <h3 class="title">Login Form</h3>
       </div>
 
+      <!-- ElementUI实现表单校验 -->
       <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon icon-class="user" />
@@ -106,10 +107,12 @@ export default {
       })
     },
     handleLogin() {
+      // v-model="loginForm.username"
+      // 怎么返回的true？？
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          // 表单校验之后，使用了vuex
+          // vuex user.js/login
           this.$store.dispatch('user/login', this.loginForm).then(() => {
             this.$router.push({ path: this.redirect || '/' })
             this.loading = false
