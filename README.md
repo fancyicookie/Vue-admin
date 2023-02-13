@@ -1,3 +1,16 @@
+# vue-admin项目
+
+```bash
+# 技术栈
+vue2、vue-router、vuex、vue-cli
+
+# UI框架
+https://element.eleme.cn/zh-CN
+
+# 解决方法
+vue-element-admin
+```
+
 # vue-admin-template
 
 English | [简体中文](./README-zh.md)
@@ -8,15 +21,6 @@ English | [简体中文](./README-zh.md)
 
 
 **The current version is `v4.0+` build on `vue-cli`. If you want to use the old version , you can switch branch to [tag/3.11.0](https://github.com/PanJiaChen/vue-admin-template/tree/tag/3.11.0), it does not rely on `vue-cli`**
-
-<p align="center">
-  <b>SPONSORED BY</b>
-</p>
-<p align="center">
-   <a href="https://finclip.com?from=vue_element" title="FinClip" target="_blank">
-      <img height="200px" src="https://gitee.com/panjiachen/gitee-cdn/raw/master/vue%E8%B5%9E%E5%8A%A9.png" title="FinClip">
-   </a>
-</p>
 
 ## Build Setup
 
@@ -35,6 +39,10 @@ npm run dev
 ```
 
 This will automatically open http://localhost:9528
+
+## 目前Demo
+
+![demo](D:\A-Document\Code\Front-end\Vue\Project\images\员工管理页面.png)
 
 ## Build
 
@@ -63,10 +71,6 @@ npm run lint -- --fix
 ```
 
 Refer to [Documentation](https://panjiachen.github.io/vue-element-admin-site/guide/essentials/deploy.html) for more information
-
-## Demo
-
-![demo](https://github.com/PanJiaChen/PanJiaChen.github.io/blob/master/images/demo.gif)
 
 ## Extra
 
