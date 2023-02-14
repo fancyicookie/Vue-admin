@@ -41,6 +41,15 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-pagination
+          style="margin-top: 12px;text-align: right;"
+          :current-page="currentPage"
+          :page-sizes="[10, 20, 30, 40]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="pageTotal"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange" />
       </div>
     </div>
   </div>
@@ -52,23 +61,52 @@ export default {
   name: 'Employee',
   data() {
     return {
-      tableList: []
+      tableList: [],
+      pageData: [],
+      pageTotal: 0,
+      currentPage: 1,
+      pageSize: 10
     }
   },
   created() {
+    // console.log('created')
     this.fetchData()
   },
+  updated() {
+    // console.log('updated')
+    // this.fetchData()
+  },
   methods: {
+    // 改变每页大小的回调
+    handleSizeChange(val) {
+      this.pageSize = val
+
+      this.pageData = this.queryByPage()
+    },
+    // 改变当前页的回调
+    handleCurrentChange(val) {
+      this.currentPage = val
+
+      this.pageData = this.queryByPage()
+    },
     fetchData() {
       // 这里参数不可变，之后需要改为 动态改变的写法
-      getEmployees({ page: 1, pageSize: 10 }).then(res => {
+      getEmployees({ page: this.currentPage, pageSize: this.pageSize }).then(res => {
         // return res
-        console.log(res.data.records)
         this.tableList = res.data.records
+        this.pageTotal = res.data.total
+        this.pageData = this.queryByPage()
       })
+    },
+    // 实现分页的方法
+    queryByPage() {
+      // 起始位置 = (当前页 - 1) x 每页的大小
+      const start = (this.currentPage - 1) * this.pageSize
+      // 结束位置 = 当前页 x 每页的大小
+      const end = this.currentPage * this.pageSize
+      return this.tableList.slice(start, end)
     }
   }
-
 }
 </script>
 
