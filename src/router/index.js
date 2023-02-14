@@ -73,13 +73,13 @@ export const constantRoutes = [
   },
 
   {
-    path: '/classification',
+    path: '/category',
     component: Layout,
     children: [
       {
         path: 'index',
-        name: 'Classification',
-        component: () => import('@/views/classification/index'),
+        name: 'Category',
+        component: () => import('@/views/category/index'),
         meta: { title: '分类管理', icon: 'el-icon-menu' }
       }
     ]
@@ -99,13 +99,13 @@ export const constantRoutes = [
   },
 
   {
-    path: '/regular',
+    path: '/setmeal',
     component: Layout,
     children: [
       {
         path: 'index',
-        name: 'Regular',
-        component: () => import('@/views/regular/index'),
+        name: 'Setmeal',
+        component: () => import('@/views/setmeal/index'),
         meta: { title: '套餐管理', icon: 'el-icon-present' }
       }
     ]
