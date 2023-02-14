@@ -42,7 +42,7 @@ This will automatically open http://localhost:9528
 
 ## 目前Demo
 
-![demo](D:\A-Document\Code\Front-end\Vue\Project\images\员工管理页面.png)
+![demo](https://github.com/fancyicookie/Vue-admin/blob/main/src/assets/images/%E5%91%98%E5%B7%A5%E7%AE%A1%E7%90%86%E9%A1%B5%E9%9D%A2.png)
 
 ## Build
 
