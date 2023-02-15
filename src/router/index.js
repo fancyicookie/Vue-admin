@@ -73,6 +73,18 @@ export const constantRoutes = [
   },
 
   {
+    path: '/addemployee',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'AddEmployee',
+        component: () => import('@/views/addemployee/index')
+      }
+    ]
+  },
+
+  {
     path: '/category',
     component: Layout,
     children: [

@@ -12,7 +12,7 @@
             <i class="el-input__icon el-icon-search" />
           </span>
         </div>
-        <button class="el-button el-button--primary">
+        <button class="el-button el-button--primary" @click="addEmployee">
           <span>+ 添加员工</span>
         </button>
       </div>
@@ -73,7 +73,8 @@ export default {
     this.fetchData()
   },
   updated() {
-    // console.log('updated')
+    console.log('updated')
+    // 会一直不断地调用
     // this.fetchData()
   },
   methods: {
@@ -105,6 +106,11 @@ export default {
       // 结束位置 = 当前页 x 每页的大小
       const end = this.currentPage * this.pageSize
       return this.tableList.slice(start, end)
+    },
+    // 跳转添加员工界面
+    addEmployee() {
+      console.log('add')
+      this.$router.push({ path: '/addemployee/index' })
     }
   }
 }
