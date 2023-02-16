@@ -14,7 +14,7 @@ export function getEmployees(params) {
 
 export function saveEmployee(data) {
   return request({
-    url: '/employee/page',
+    url: '/employee',
     method: 'post',
     data
   })

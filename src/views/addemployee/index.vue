@@ -7,8 +7,8 @@
     <div class="table-container">
       <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="200px" class="demo-ruleForm">
         <!-- 账号 -->
-        <el-form-item prop="account" label="账号">
-          <el-input v-model="ruleForm.account" />
+        <el-form-item prop="username" label="账号">
+          <el-input v-model="ruleForm.username" />
         </el-form-item>
         <!-- 员工姓名 -->
         <el-form-item prop="name" label="员工姓名">
@@ -19,15 +19,15 @@
           <el-input v-model="ruleForm.phone" />
         </el-form-item>
         <!-- 性别 -->
-        <el-form-item label="性别" prop="gender">
-          <el-radio-group v-model="ruleForm.gender">
-            <el-radio label="男" />
-            <el-radio label="女" />
+        <el-form-item label="性别" prop="sex">
+          <el-radio-group v-model="ruleForm.sex">
+            <el-radio label="1">男</el-radio>
+            <el-radio label="2">女</el-radio>
           </el-radio-group>
         </el-form-item>
         <!-- 身份证号 -->
-        <el-form-item prop="id" label="身份证号">
-          <el-input v-model="ruleForm.id" />
+        <el-form-item prop="idNumber" label="身份证号">
+          <el-input v-model="ruleForm.idNumber" />
         </el-form-item>
         <!-- 按钮 -->
         <el-form-item>
@@ -44,19 +44,20 @@
 
 <script>
 import { saveEmployee } from '@/api/employee'
+
 export default {
   name: 'AddEmployee',
   data() {
     return {
       ruleForm: {
-        account: '',
+        username: '',
         name: '',
         phone: '',
-        gender: '',
-        id: ''
+        sex: '1',
+        idNumber: ''
       },
       rules: {
-        account: [
+        username: [
           { required: true, message: '请输入账号', trigger: 'blur' },
           { min: 3, max: 20, message: '账号长度应在3-20', trigger: 'blur' }
         ],
@@ -67,10 +68,10 @@ export default {
           { required: true, message: '请输入手机号', trigger: 'blur' },
           { min: 11, max: 11, message: '请输入正确手机号！', trigger: 'blur' }
         ],
-        gender: [
+        sex: [
           { required: true, message: '请选择性别', trigger: 'change' }
         ],
-        id: [
+        idNumber: [
           { required: true, message: '请输入身份证号', trigger: 'blur' },
           { min: 18, max: 18, message: '请输入正确身份证号！', trigger: 'blur' }
         ]
