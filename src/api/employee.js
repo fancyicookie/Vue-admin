@@ -11,3 +11,11 @@ export function getEmployees(params) {
     params
   })
 }
+
+export function saveEmployee(data) {
+  return request({
+    url: '/employee/page',
+    method: 'post',
+    data
+  })
+}

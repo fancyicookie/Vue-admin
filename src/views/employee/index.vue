@@ -75,12 +75,6 @@ export default {
     // console.log('created')
     this.fetchData()
   },
-  mounted() {
-    console.log(this.$route.query)
-    this.tableList.unshift(this.$route.query)
-    this.pageData = this.fetchData(this.currentPage, this.pageSize)
-    console.log('finish')
-  },
   methods: {
     // 改变每页大小的回调
     handleSizeChange(val) {
