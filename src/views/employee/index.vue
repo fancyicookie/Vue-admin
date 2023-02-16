@@ -62,7 +62,9 @@ export default {
   name: 'Employee',
   data() {
     return {
+      // 总体全部数据
       tableList: [],
+      // 每页数据
       pageData: [],
       pageTotal: 0,
       currentPage: 1,
@@ -74,50 +76,36 @@ export default {
     this.fetchData()
   },
   updated() {
-    console.log('updated')
+    // console.log('updated')
     // 会一直不断地调用
     // this.fetchData()
   },
   mounted() {
-    console.log(this.$route.query)
+    // console.log(this.$route.query)
     this.tableList.unshift(this.$route.query)
-    this.fetchData()
-    console.log('finish')
+    // this.fetchData()
+    // console.log('finish')
   },
   methods: {
     // 改变每页大小的回调
     handleSizeChange(val) {
       this.pageSize = val
-
       this.pageData = this.queryByPage()
     },
     // 改变当前页的回调
     handleCurrentChange(val) {
       this.currentPage = val
-
-      this.pageData = this.queryByPage()
+      this.pageData = this.fetchData(this.currentPage, this.pageSize)
     },
     fetchData() {
-      // 这里参数不可变，之后需要改为 动态改变的写法
       getEmployees({ page: this.currentPage, pageSize: this.pageSize }).then(res => {
-        // return res
         this.tableList = res.data.records
-        console.log(this.tableList)
         this.pageTotal = res.data.total
-        this.pageData = this.queryByPage()
       })
-    },
-    // 实现分页的方法
-    queryByPage() {
-      // 起始位置 = (当前页 - 1) x 每页的大小
-      const start = (this.currentPage - 1) * this.pageSize
-      // 结束位置 = 当前页 x 每页的大小
-      const end = this.currentPage * this.pageSize
-      return this.tableList.slice(start, end)
     },
     // 跳转添加员工界面
     addEmployee() {
-      console.log('add')
+      // console.log('add')
       this.$router.push({ path: '/addemployee/index' })
     }
   }
