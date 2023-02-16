@@ -1,7 +1,11 @@
+<!--
+ * @Date: 2023-02-15 17:49:59
+ * @Author: Fancyicookie
+-->
 <template>
   <div id="member-app" class="container">
     <div class="table-container">
-      <el-form :model="ruleForm" ref="ruleForm" :rules="rules" label-width="200px" class="demo-ruleForm">
+      <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="200px" class="demo-ruleForm">
         <!-- 账号 -->
         <el-form-item prop="account" label="账号">
           <el-input v-model="ruleForm.account" />
@@ -28,7 +32,9 @@
         <!-- 按钮 -->
         <el-form-item>
           <el-button>取消</el-button>
+          <!-- 跳转页面并显示 -->
           <el-button type="primary" @click="onSubmit">保存</el-button>
+          <!-- 不跳转页面，输入框为空 -->
           <el-button type="primary" @click="onSubmit">保存并继续添加</el-button>
         </el-form-item>
       </el-form>
@@ -43,7 +49,10 @@ export default {
     return {
       ruleForm: {
         account: '',
-        gender: ''
+        name: '',
+        phone: '',
+        gender: '',
+        id: ''
       },
       rules: {
         account: [
@@ -61,7 +70,7 @@ export default {
           { required: true, message: '请选择性别', trigger: 'change' }
         ],
         id: [
-          { required: true, message: '请输入员工姓名', trigger: 'blur' },
+          { required: true, message: '请输入身份证号', trigger: 'blur' },
           { min: 18, max: 18, message: '请输入正确身份证号！', trigger: 'blur' }
         ]
       }
@@ -69,7 +78,13 @@ export default {
   },
   methods: {
     onSubmit() {
-      console.log('submit!')
+      const formObj = {
+        account: this.ruleForm.account,
+        name: this.ruleForm.name,
+        phone: this.ruleForm.phone,
+        id: this.ruleForm.id
+      }
+      this.$router.push({ path: '/employee/index', query: formObj })
     }
   }
 }
@@ -84,4 +99,7 @@ export default {
     padding: 25px;
     background-color: #fff;
   }
+.container .demo-ruleForm {
+  width: 600px;
+}
 </style>

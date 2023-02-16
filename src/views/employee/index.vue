@@ -49,7 +49,8 @@
           layout="total, sizes, prev, pager, next, jumper"
           :total="pageTotal"
           @size-change="handleSizeChange"
-          @current-change="handleCurrentChange" />
+          @current-change="handleCurrentChange"
+        />
       </div>
     </div>
   </div>
@@ -77,6 +78,12 @@ export default {
     // 会一直不断地调用
     // this.fetchData()
   },
+  mounted() {
+    console.log(this.$route.query)
+    this.tableList.unshift(this.$route.query)
+    this.fetchData()
+    console.log('finish')
+  },
   methods: {
     // 改变每页大小的回调
     handleSizeChange(val) {
@@ -95,6 +102,7 @@ export default {
       getEmployees({ page: this.currentPage, pageSize: this.pageSize }).then(res => {
         // return res
         this.tableList = res.data.records
+        console.log(this.tableList)
         this.pageTotal = res.data.total
         this.pageData = this.queryByPage()
       })
