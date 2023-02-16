@@ -75,22 +75,17 @@ export default {
     // console.log('created')
     this.fetchData()
   },
-  updated() {
-    // console.log('updated')
-    // 会一直不断地调用
-    // this.fetchData()
-  },
   mounted() {
-    // console.log(this.$route.query)
+    console.log(this.$route.query)
     this.tableList.unshift(this.$route.query)
-    // this.fetchData()
-    // console.log('finish')
+    this.pageData = this.fetchData(this.currentPage, this.pageSize)
+    console.log('finish')
   },
   methods: {
     // 改变每页大小的回调
     handleSizeChange(val) {
       this.pageSize = val
-      this.pageData = this.queryByPage()
+      this.pageData = this.fetchData()
     },
     // 改变当前页的回调
     handleCurrentChange(val) {
