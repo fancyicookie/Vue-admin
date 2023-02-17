@@ -26,3 +26,11 @@ export function editEmployee(id) {
     method: 'get'
   })
 }
+
+export function edit(data) {
+  return request({
+    url: '/employee',
+    method: 'put',
+    data
+  })
+}

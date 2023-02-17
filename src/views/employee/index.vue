@@ -116,7 +116,7 @@ export default {
     // 编辑
     handleEdit(index, row) {
       console.log('edit')
-      this.$router.push({ path: '/editemployee/index' })
+      this.$router.push({ path: '/editemployee/index', query: { id: row.id }})
     },
     handleDelete(index, row) {
       if (row.status === 1) {

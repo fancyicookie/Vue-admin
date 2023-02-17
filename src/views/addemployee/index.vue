@@ -7,8 +7,8 @@
     <div class="table-container">
       <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="200px" class="demo-ruleForm">
         <!-- 账号 -->
-        <el-form-item prop="account" label="账号">
-          <el-input v-model="ruleForm.account" />
+        <el-form-item prop="username" label="账号">
+          <el-input v-model="ruleForm.username" />
         </el-form-item>
         <!-- 员工姓名 -->
         <el-form-item prop="name" label="员工姓名">

@@ -41,8 +41,8 @@
 </template>
 
 <script>
-import { saveEmployee } from '@/api/employee'
-// import { editEmployee } from '@/api/employee'
+// import { saveEmployee } from '@/api/employee'
+import { edit, editEmployee } from '@/api/employee'
 
 export default {
   name: 'AddEmployee',
@@ -53,8 +53,7 @@ export default {
         name: '',
         phone: '',
         sex: '',
-        idNumber: '',
-        id: ''
+        idNumber: ''
       },
       rules: {
         username: [
@@ -78,27 +77,24 @@ export default {
       }
     }
   },
+  created() {
+    editEmployee(this.$route.query.id).then(res => {
+      this.ruleForm = res.data
+    })
+  },
   methods: {
-    // 没有触发这个生命周期
-    // created() {
-    //   console.log('created')
-    //   editEmployee(this.$route.query.id).then(res => {
-    //     console.log(res.data)
-    //     // 传入数据
-    //   })
-    // },
-    created() {
-      console.log('created')
-    },
     cancel() {
       this.$router.push({ path: '/employee/index' })
     },
+    // 提交保存修改
     onSubmit() {
+      console.log('save')
+      console.log(this.ruleForm)
       this.$refs['ruleForm'].validate((valid) => {
         if (valid) {
-          // 数据保存至后端即可
-          saveEmployee(this.ruleForm).then(() => {
-            this.$message.success('添加成功')
+          edit(this.ruleForm).then(() => {
+            this.$message.success('修改成功')
+            this.$refs['ruleForm'].resetFields()
             this.$router.push({ path: '/employee/index' })
           })
         } else {
