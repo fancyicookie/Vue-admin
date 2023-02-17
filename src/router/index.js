@@ -85,6 +85,18 @@ export const constantRoutes = [
   },
 
   {
+    path: '/editemployee',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'EditEmployee',
+        component: () => import('@/views/editemployee/index')
+      }
+    ]
+  },
+
+  {
     path: '/category',
     component: Layout,
     children: [

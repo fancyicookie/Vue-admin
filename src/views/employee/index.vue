@@ -7,9 +7,9 @@
     <div class="table-container">
       <div class="tableBar">
         <div class="el-input el-input--prefix el-input--suffix" style="width:250px">
-          <input type="text" placeholder="请输入员工姓名" class="el-input__inner">
+          <input v-model="searchName" type="text" placeholder="请输入员工姓名" class="el-input__inner">
           <span class="el-input__prefix">
-            <i class="el-input__icon el-icon-search" />
+            <i class="el-input__icon el-icon-search" style="cursor: pointer;" @click="searchNames" />
           </span>
         </div>
         <button class="el-button el-button--primary" @click="addEmployee">
@@ -58,6 +58,8 @@
 
 <script>
 import { getEmployees } from '@/api/employee'
+// import { editEmployee } from '@/api/employee'
+
 export default {
   name: 'Employee',
   data() {
@@ -68,7 +70,9 @@ export default {
       pageData: [],
       pageTotal: 0,
       currentPage: 1,
-      pageSize: 10
+      pageSize: 10,
+      showList: [],
+      searchName: ''
     }
   },
   created() {
@@ -96,6 +100,30 @@ export default {
     addEmployee() {
       // console.log('add')
       this.$router.push({ path: '/addemployee/index' })
+    },
+    queryAllName() {
+      this.showList = this.tableList
+    },
+    searchNames() {
+      if (this.searchName.length === 0) {
+        this.showList = this.tableList
+      } else {
+        this.tableList = this.tableList.filter(data => {
+          return data.name.indexOf(this.searchName) !== -1
+        })
+      }
+    },
+    // 编辑
+    handleEdit(index, row) {
+      console.log('edit')
+      this.$router.push({ path: '/editemployee/index' })
+    },
+    handleDelete(index, row) {
+      if (row.status === 1) {
+        row.status = 0
+      } else {
+        row.status = 1
+      }
     }
   }
 }

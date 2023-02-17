@@ -14,8 +14,15 @@ export function getEmployees(params) {
 
 export function saveEmployee(data) {
   return request({
-    url: '/employee/page',
+    url: '/employee',
     method: 'post',
     data
+  })
+}
+
+export function editEmployee(id) {
+  return request({
+    url: '/employee/' + id,
+    method: 'get'
   })
 }

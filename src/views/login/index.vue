@@ -108,11 +108,10 @@ export default {
     },
     handleLogin() {
       // v-model="loginForm.username"
-      // 怎么返回的true？？
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          // vuex user.js/login
+          // vuex ---> store/modules/user.js/login
           this.$store.dispatch('user/login', this.loginForm).then(() => {
             this.$router.push({ path: this.redirect || '/' })
             this.loading = false
