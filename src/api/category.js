@@ -11,3 +11,27 @@ export function getCategory(params) {
     params
   })
 }
+
+export function saveCategory(data) {
+  return request({
+    url: '/category',
+    method: 'post',
+    data
+  })
+}
+
+export function editCategory(data) {
+  return request({
+    url: '/category',
+    method: 'put',
+    data
+  })
+}
+
+export function delCategory(params) {
+  return request({
+    url: '/category',
+    method: 'delete',
+    params
+  })
+}
