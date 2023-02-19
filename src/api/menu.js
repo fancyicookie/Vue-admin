@@ -11,3 +11,11 @@ export function getDish(params) {
     params
   })
 }
+
+export function getDishImage(params) {
+  return request({
+    url: '/common/download',
+    method: 'get',
+    params
+  })
+}

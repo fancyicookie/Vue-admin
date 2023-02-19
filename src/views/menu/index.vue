@@ -17,7 +17,9 @@
         </button>
       </div>
       <div class="el-table tableBox">
-        <el-table :data="tableList" stripe border style="width: 100%">
+        <!-- 多行数据的复选框 -->
+        <el-table ref="multipleTable" :data="tableList" stripe border style="width: 100%" @selection-change="handleSelectionChange">
+          <el-table-column type="selection" width="55" />
           <el-table-column prop="name" label="菜品名称" width="180" />
           <el-table-column prop="image" label="图片" width="90">
             <template slot-scope="scope">
@@ -46,6 +48,17 @@
             </template>
           </el-table-column>
         </el-table>
+        <!-- 分页 -->
+        <el-pagination
+          style="margin-top: 12px;text-align: right;"
+          :current-page="currentPage"
+          :page-sizes="[10, 20, 30, 40]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="pageTotal"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
       </div>
     </div>
   </div>
@@ -57,20 +70,34 @@ export default {
   name: 'Employee',
   data() {
     return {
-      tableList: []
+      tableList: [],
+      pageData: [],
+      pageTotal: 0,
+      currentPage: 1,
+      pageSize: 10,
+      multipleSelection: []
     }
   },
   created() {
     this.fetchData()
   },
   methods: {
+    handleSizeChange(val) {
+      this.pageSize = val
+      this.pageData = this.fetchData()
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val
+      this.pageData = this.fetchData(this.currentPage, this.pageSize)
+    },
     fetchData() {
-      // 这里参数不可变，之后需要改为 动态改变的写法
-      getDish({ page: 1, pageSize: 10 }).then(res => {
-        // return res
-        console.log(res.data.records)
+      getDish({ page: this.currentPage, pageSize: this.pageSize }).then(res => {
         this.tableList = res.data.records
+        this.pageTotal = res.data.total
       })
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
     }
   }
 
