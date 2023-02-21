@@ -64,7 +64,7 @@ export const constantRoutes = [
     component: Layout,
     children: [
       {
-        path: 'index',
+        path: '',
         name: 'Employee',
         component: () => import('@/views/employee/index'),
         meta: { title: '员工管理', icon: 'user' }
@@ -91,7 +91,11 @@ export const constantRoutes = [
       {
         path: '',
         name: 'EditEmployee',
-        component: () => import('@/views/editemployee/index')
+        component: () => import('@/views/editemployee/index'),
+        hidden: true,
+        meta: {
+          activeMenu: '/employee'
+        }
       }
     ]
   },

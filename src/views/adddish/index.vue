@@ -57,23 +57,17 @@
         <!-- 菜品图片 -->
         <el-form-item prop="image" label="菜品图片">
           <el-upload
-            action="/file/Upload?module=EQ"
-            accept="image/jpeg,image/jpg,image/png"
-            :limit="1"
-            :on-change="handleLimit"
+            action="/"
             list-type="picture-card"
-            :on-success="handleSuccess"
-            :on-remove="handleRemove"
+            :show-file-list="false"
+            :http-request="uploadImage"
           >
-            <i class="el-icon-plus" />
+            <img v-if="ruleForm.image" :src="`${env}/common/download?name=${ruleForm.image}`" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon" />
           </el-upload>
-          <!-- 预览图片 -->
-          <el-dialog :visible.sync="dialogVisibleimg" append-to-body>
-            <img width="100%" :src="dialogImageUrl" alt="">
-          </el-dialog>
         </el-form-item>
         <el-form-item prop="description" label="菜品描述">
-          <el-input type="textarea" placeholder="请输入菜品描述，最多200字" />
+          <el-input v-model="ruleForm.description" type="textarea" placeholder="请输入菜品描述，最多200字" />
         </el-form-item>
         <!-- 按钮 -->
         <el-form-item>
@@ -90,11 +84,13 @@
 
 <script>
 import { addDish, addDishCate } from '@/api/menu'
+import { uploadImage } from '@/api/common'
 
 export default {
   name: 'AddEmployee',
   data() {
     return {
+      env: process.env.VUE_APP_BASE_API,
       ruleForm: {
         name: '',
         categoryName: '',
@@ -102,7 +98,6 @@ export default {
         image: '',
         description: ''
       },
-      dialogImageUrl: '',
       dialogVisible: false,
       disabled: false,
       options: [{
@@ -142,6 +137,13 @@ export default {
     this.tastes = this.loadAll()
   },
   methods: {
+    uploadImage(file) {
+      const formData = new FormData()
+      formData.append('file', file.file)
+      uploadImage(formData).then((res) => {
+        this.ruleForm.image = res.data
+      })
+    },
     show() {
       this.tasteShow = !this.tasteShow
       this.addTaste = !this.addTaste
@@ -207,16 +209,6 @@ export default {
         this.eqObj.uploadDisabled = false
         this.$set(this.eqObj, 'uploadDisabled', false)
       }
-      this.$forceUpdate()
-    },
-    handleSuccess(response, file, fileList) {
-      if (response.success) {
-        this.eqForm.image = response.filepath
-      }
-    },
-    handleRemove(file, fileList) {
-      console.log(file, fileList)
-      this.eqObj.uploadDisabled = false
       this.$forceUpdate()
     }
   }

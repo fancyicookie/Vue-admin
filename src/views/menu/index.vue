@@ -30,7 +30,11 @@
           <el-table-column prop="name" label="菜品名称" width="180" />
           <el-table-column prop="image" label="图片" width="90">
             <template slot-scope="scope">
-              <img :src="scope.row.image" alt="">
+              <el-image style="width: 40px" :src="`${commonImaggeBaseUrl}${scope.row.image}/`">
+                <div slot="error" class="image-slot">
+                  <i class="el-icon-picture-outline" />
+                </div>
+              </el-image>
             </template>
           </el-table-column>
           <el-table-column prop="categoryName" label="菜品分类" width="90" />
@@ -88,10 +92,12 @@
 
 <script>
 import { deleteDish, getDish } from '@/api/menu'
+import { commonImaggeBaseUrl } from '@/api/common'
 export default {
   name: 'Employee',
   data() {
     return {
+      commonImaggeBaseUrl,
       tableList: [],
       pageData: [],
       pageTotal: 0,
