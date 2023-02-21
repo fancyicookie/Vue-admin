@@ -12,10 +12,42 @@ export function getDish(params) {
   })
 }
 
+export function addDish(data) {
+  return request({
+    url: '/dish',
+    method: 'post',
+    data
+  })
+}
+
+export function addDishCate(data) {
+  return request({
+    url: '/category/list',
+    method: 'get',
+    data
+  })
+}
+
 export function getDishImage(params) {
   return request({
     url: '/common/download',
     method: 'get',
+    params
+  })
+}
+
+export function postDishImage(params) {
+  return request({
+    url: '/common/download',
+    method: 'post',
+    params
+  })
+}
+
+export function deleteDish(params) {
+  return request({
+    url: '/dish',
+    method: 'delete',
     params
   })
 }

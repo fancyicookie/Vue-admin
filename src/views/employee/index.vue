@@ -99,7 +99,7 @@ export default {
     // 跳转添加员工界面
     addEmployee() {
       // console.log('add')
-      this.$router.push({ path: '/addemployee/index' })
+      this.$router.push({ path: '/addemployee' })
     },
     queryAllName() {
       this.showList = this.tableList
@@ -116,7 +116,7 @@ export default {
     // 编辑
     handleEdit(index, row) {
       console.log('edit')
-      this.$router.push({ path: '/editemployee/index', query: { id: row.id }})
+      this.$router.push({ path: '/editemployee', query: { id: row.id }})
     },
     handleDelete(index, row) {
       if (row.status === 1) {

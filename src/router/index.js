@@ -123,6 +123,30 @@ export const constantRoutes = [
   },
 
   {
+    path: '/adddish',
+    component: Layout,
+    children: [
+      {
+        path: '',
+        name: 'AddDish',
+        component: () => import('@/views/adddish/index')
+      }
+    ]
+  },
+
+  {
+    path: '/editdish',
+    component: Layout,
+    children: [
+      {
+        path: '',
+        name: 'EditDish',
+        component: () => import('@/views/editdish/index')
+      }
+    ]
+  },
+
+  {
     path: '/setmeal',
     component: Layout,
     children: [
