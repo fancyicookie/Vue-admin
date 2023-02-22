@@ -14,10 +14,17 @@
         </div>
         <div class="click-event">
           <div class="batch">
-            <span>批量删除 | </span>
-            <span style="color: #409EFF">批量启售  </span>|
+            <span @click="multiDelete">批量删除</span> |
+            <span style="color: #409EFF">批量启售</span> |
             <span>批量停售 </span>
           </div>
+          <el-dialog title="提示" :visible.sync="dialogMultiDel">
+            <span>确认删除这些菜品?</span>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="dialogMultiDel = false">取 消</el-button>
+              <el-button type="primary" @click="onMultiDel">确 定</el-button>
+            </div>
+          </el-dialog>
           <button class="el-button el-button--primary" @click="addDish">
             <span>+ 新建菜品</span>
           </button>
@@ -114,6 +121,7 @@ export default {
       imgSrc: '',
       dialogDel: false,
       dialogStatus: false,
+      dialogMultiDel: false,
       form: {
         id: '',
         name: '',
@@ -148,6 +156,30 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
+    },
+    multiDelete() {
+      if (this.multipleSelection.length === 0) {
+        this.$message.error('请选择删除对象')
+      } else {
+        this.dialogMultiDel = true
+      }
+    },
+    onMultiDel() {
+      // console.log(this.multipleSelection)
+      const res = this.multipleSelection.every(item => item.status === 0)
+      if (res) {
+        this.multipleSelection.forEach(item => {
+          deleteDish({ ids: item.id }).then(() => {
+            // 这个地方的this指向什么 function() 输出undefined
+            // console.log(this) => 指向VC
+            this.$message.success('删除成功!')
+            this.fetchData()
+            this.dialogMultiDel = false
+          })
+        })
+      } else {
+        this.$message.error('存在正在售卖中的菜品, 不能删除')
+      }
     },
     addDish() {
       this.$router.push({ path: '/adddish' })
