@@ -45,7 +45,7 @@
           </el-table-column>
           <el-table-column prop="status" label="售卖状态" width="90">
             <template slot-scope="scope">
-              <span>{{ scope.row.status == 1 ? '起售' : '停售' }}</span>
+              <span>{{ scope.row.status == 1 ? '启售' : '停售' }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="updateTime" label="最后操作时间" width="180" />
@@ -60,6 +60,13 @@
                 type="danger"
                 @click="handleStatus(scope.$index, scope.row)"
               >{{ scope.row.status == 1 ? '停售' : '启售' }}</el-button>
+              <el-dialog title="提示" :visible.sync="dialogStatus">
+                <span>确认更改该菜品状态?</span>
+                <div slot="footer" class="dialog-footer">
+                  <el-button @click="dialogStatus = false">取 消</el-button>
+                  <el-button type="primary" @click="onStatus">确 定</el-button>
+                </div>
+              </el-dialog>
               <el-button
                 size="mini"
                 @click="handleDelete(scope.$index, scope.row)"
@@ -91,7 +98,7 @@
 </template>
 
 <script>
-import { deleteDish, getDish } from '@/api/menu'
+import { deleteDish, getDish, post0Status, post1Status } from '@/api/menu'
 import { commonImaggeBaseUrl } from '@/api/common'
 export default {
   name: 'Employee',
@@ -106,6 +113,7 @@ export default {
       multipleSelection: [],
       imgSrc: '',
       dialogDel: false,
+      dialogStatus: false,
       form: {
         id: '',
         name: '',
@@ -145,15 +153,25 @@ export default {
       this.$router.push({ path: '/adddish' })
     },
     handleStatus(index, row) {
-      if (row.status === 1) {
-        row.status = 0
+      this.dialogStatus = true
+      this.form = row
+    },
+    onStatus() {
+      if (this.form.status === 0) {
+        post1Status({ ids: this.form.id }).then(() => {
+          this.dialogStatus = false
+          this.$message.success('状态修改成功')
+          this.fetchData()
+        })
       } else {
-        row.status = 1
+        post0Status({ ids: this.form.id }).then(() => {
+          this.dialogStatus = false
+          this.$message.success('状态修改成功')
+          this.fetchData()
+        })
       }
     },
     handleDelete(index, row) {
-      console.log('delete')
-      console.log(row)
       this.dialogDel = true
       this.form = row
     },

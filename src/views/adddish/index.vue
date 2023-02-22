@@ -11,19 +11,19 @@
           <el-input v-model="ruleForm.name" placeholder="请填写菜品名称" />
         </el-form-item>
         <!-- 菜品分类 -->
-        <el-form-item prop="type" label="菜品分类">
-          <el-select v-model="value" placeholder="请选择菜品分类">
+        <el-form-item prop="categoryName" label="菜品分类">
+          <el-select v-model="ruleForm.categoryName" placeholder="请选择菜品分类" @change="getCategoryId">
             <el-option
               v-for="item in options"
               :key="item.id"
               :label="item.name"
-              :value="item.name"
+              :value="item.id"
             />
           </el-select>
         </el-form-item>
         <!-- 菜品价格 -->
         <el-form-item prop="price" label="菜品价格">
-          <el-input v-model="ruleForm.price" placeholder="请设置菜品价格" />
+          <el-input v-model.number="ruleForm.price" placeholder="请设置菜品价格" />
         </el-form-item>
         <!-- 口味做法配置 -->
         <el-form-item label="口味做法配置">
@@ -93,10 +93,13 @@ export default {
       env: process.env.VUE_APP_BASE_API,
       ruleForm: {
         name: '',
-        categoryName: '',
         price: '',
         image: '',
-        description: ''
+        description: '',
+        flavors: [],
+        categoryId: '',
+        status: 1,
+        code: ''
       },
       dialogVisible: false,
       disabled: false,
@@ -108,7 +111,7 @@ export default {
         name: [
           { required: true, message: '请输入菜品名称', trigger: 'blur' }
         ],
-        type: [
+        categoryName: [
           { required: true, message: '请输入菜品分类', trigger: 'blur' }
         ],
         price: [
@@ -179,8 +182,8 @@ export default {
           // 数据保存至后端即可, 图片保存
           addDish(this.ruleForm).then(() => {
             this.$message.success('添加成功')
-            this.$router.push({ path: '/menu/index' })
-          })
+            this.$router.push({ path: '/menu' })
+          }).catch(error => { console.log(error.response) })
         } else {
           return false
         }
@@ -210,6 +213,13 @@ export default {
         this.$set(this.eqObj, 'uploadDisabled', false)
       }
       this.$forceUpdate()
+    },
+    getCategoryId(val) {
+      var obj = {}
+      obj = this.options.find(function(item) {
+        return item.id === val
+      })
+      this.ruleForm.categoryId = obj.id
     }
   }
 }
@@ -240,14 +250,15 @@ export default {
 .avatar-uploader-icon {
     font-size: 28px;
     color: #8c939d;
-    width: 178px;
-    height: 178px;
-    line-height: 178px;
+    width: 128px;
+    height: 128px;
+    line-height: 128px;
     text-align: center;
   }
 .avatar {
-    width: 178px;
-    height: 178px;
+    width: 146px;
+    height: 146px;
+    border-radius: 2px;
     display: block;
   }
 .card-input {
@@ -273,5 +284,13 @@ export default {
   display: none !important;
 }
 
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 148px;
+  height: 148px;
+  line-height: 148px;
+  text-align: center;
+}
 </style>
 

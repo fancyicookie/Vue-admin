@@ -20,11 +20,11 @@ export function addDish(data) {
   })
 }
 
-export function addDishCate(data) {
+export function addDishCate(params) {
   return request({
     url: '/category/list',
     method: 'get',
-    data
+    params
   })
 }
 
@@ -38,7 +38,7 @@ export function getDishImage(params) {
 
 export function postDishImage(params) {
   return request({
-    url: '/common/download',
+    url: '/common/upload',
     method: 'post',
     params
   })
@@ -48,6 +48,22 @@ export function deleteDish(params) {
   return request({
     url: '/dish',
     method: 'delete',
+    params
+  })
+}
+
+export function post0Status(params) {
+  return request({
+    url: '/dish/status/0',
+    method: 'post',
+    params
+  })
+}
+
+export function post1Status(params) {
+  return request({
+    url: '/dish/status/1',
+    method: 'post',
     params
   })
 }

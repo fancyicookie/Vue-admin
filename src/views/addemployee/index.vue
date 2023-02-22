@@ -80,7 +80,7 @@ export default {
   },
   methods: {
     cancel() {
-      this.$router.push({ path: '/employee/index' })
+      this.$router.push({ path: '/employee' })
     },
     onSubmit() {
       this.$refs['ruleForm'].validate((valid) => {
@@ -88,7 +88,7 @@ export default {
           // 数据保存至后端即可
           saveEmployee(this.ruleForm).then(() => {
             this.$message.success('添加成功')
-            this.$router.push({ path: '/employee/index' })
+            this.$router.push({ path: '/employee' })
           })
         } else {
           return false
