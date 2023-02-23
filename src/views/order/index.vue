@@ -35,7 +35,7 @@
 <script>
 import { getOrder } from '@/api/order'
 export default {
-  name: 'Employee',
+  name: 'Order',
   data() {
     return {
       tableList: []

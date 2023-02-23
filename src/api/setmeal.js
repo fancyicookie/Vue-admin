@@ -11,3 +11,27 @@ export function getSetmeal(params) {
     params
   })
 }
+
+export function deleteSetmeal(params) {
+  return request({
+    url: '/setmeal',
+    method: 'delete',
+    params
+  })
+}
+
+export function post0Status(params) {
+  return request({
+    url: '/setmeal/status/0',
+    method: 'post',
+    params
+  })
+}
+
+export function post1Status(params) {
+  return request({
+    url: '/setmeal/status/1',
+    method: 'post',
+    params
+  })
+}

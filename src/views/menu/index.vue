@@ -7,22 +7,36 @@
     <div class="table-container">
       <div class="tableBar">
         <div class="el-input el-input--prefix el-input--suffix" style="width:250px">
-          <input type="text" placeholder="请输入菜品姓名" class="el-input__inner">
+          <input v-model="search" type="text" placeholder="请输入菜品名称" class="el-input__inner">
           <span class="el-input__prefix">
-            <i class="el-input__icon el-icon-search" />
+            <i class="el-input__icon el-icon-search" style="cursor: pointer;" @click="onSearch" />
           </span>
         </div>
         <div class="click-event">
           <div class="batch">
             <span @click="multiDelete">批量删除</span> |
-            <span style="color: #409EFF">批量启售</span> |
-            <span>批量停售 </span>
+            <span style="color: #409EFF" @click="multiOpenEdit">批量启售</span> |
+            <span @click="multiStopEdit">批量停售 </span>
           </div>
           <el-dialog title="提示" :visible.sync="dialogMultiDel">
             <span>确认删除这些菜品?</span>
             <div slot="footer" class="dialog-footer">
               <el-button @click="dialogMultiDel = false">取 消</el-button>
               <el-button type="primary" @click="onMultiDel">确 定</el-button>
+            </div>
+          </el-dialog>
+          <el-dialog title="提示" :visible.sync="dialogMultiOpenEdit">
+            <span>确认更改菜品状态?</span>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="dialogMultiOpenEdit = false">取 消</el-button>
+              <el-button type="primary" @click="onMultiOpenEdit">确 定</el-button>
+            </div>
+          </el-dialog>
+          <el-dialog title="提示" :visible.sync="dialogMultiStopEdit">
+            <span>确认更改菜品状态?</span>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="dialogMultiStopEdit = false">取 消</el-button>
+              <el-button type="primary" @click="onMultiStopEdit">确 定</el-button>
             </div>
           </el-dialog>
           <button class="el-button el-button--primary" @click="addDish">
@@ -108,9 +122,10 @@
 import { deleteDish, getDish, post0Status, post1Status } from '@/api/menu'
 import { commonImaggeBaseUrl } from '@/api/common'
 export default {
-  name: 'Employee',
+  name: 'Menu',
   data() {
     return {
+      search: '',
       commonImaggeBaseUrl,
       tableList: [],
       pageData: [],
@@ -122,6 +137,8 @@ export default {
       dialogDel: false,
       dialogStatus: false,
       dialogMultiDel: false,
+      dialogMultiOpenEdit: false,
+      dialogMultiStopEdit: false,
       form: {
         id: '',
         name: '',
@@ -136,6 +153,15 @@ export default {
     this.fetchData()
   },
   methods: {
+    onSearch() {
+      if (this.search.length === 0) {
+        this.showList = this.tableList
+      } else {
+        this.tableList = this.tableList.filter(data => {
+          return data.name.indexOf(this.search) !== -1
+        })
+      }
+    },
     handleSizeChange(val) {
       this.pageSize = val
       this.pageData = this.fetchData()
@@ -180,6 +206,38 @@ export default {
       } else {
         this.$message.error('存在正在售卖中的菜品, 不能删除')
       }
+    },
+    multiOpenEdit() {
+      if (this.multipleSelection.length === 0) {
+        this.$message.error('批量操作，请先勾选操作菜品！')
+      } else {
+        this.dialogMultiOpenEdit = true
+      }
+    },
+    onMultiOpenEdit() {
+      this.multipleSelection.forEach(item => {
+        post1Status({ ids: item.id }).then(() => {
+          this.dialogMultiOpenEdit = false
+          this.fetchData()
+        })
+      })
+      this.$message.success('菜品状态已经成功更改为起售状态！')
+    },
+    multiStopEdit() {
+      if (this.multipleSelection.length === 0) {
+        this.$message.error('批量操作，请先勾选操作菜品！')
+      } else {
+        this.dialogMultiStopEdit = true
+      }
+    },
+    onMultiStopEdit() {
+      this.multipleSelection.forEach(item => {
+        post0Status({ ids: item.id }).then(() => {
+          this.dialogMultiEdit = false
+          this.fetchData()
+        })
+      })
+      this.$message.success('菜品状态已经成功更改为停售状态！')
     },
     addDish() {
       this.$router.push({ path: '/adddish' })

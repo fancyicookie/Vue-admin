@@ -162,6 +162,19 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/setmeal/add',
+    component: Layout,
+    children: [
+      {
+        path: '',
+        name: 'AddSetmeal',
+        component: () => import('@/views/setmeal/add'),
+        meta: { title: '套餐管理', icon: 'el-icon-present' },
+        hidden: true
+      }
+    ]
+  },
 
   {
     path: '/order',

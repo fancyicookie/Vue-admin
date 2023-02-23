@@ -106,7 +106,7 @@
 <script>
 import { getCategory, saveCategory, editCategory, delCategory } from '@/api/category'
 export default {
-  name: 'Employee',
+  name: 'Category',
   data() {
     return {
       tableList: [],
