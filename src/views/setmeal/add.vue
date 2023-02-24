@@ -25,33 +25,65 @@
         <el-form-item prop="price" label="套餐价格">
           <el-input v-model.number="ruleForm.price" placeholder="请设置套餐价格" />
         </el-form-item>
-        <!-- 口味做法配置 -->
-        <el-form-item label="口味做法配置">
-          <el-button v-show="tasteShow" @click="show">+ 添加口味</el-button>
-          <el-card v-show="addTaste" class="card-input" shadow="never" style="background-color: rgb(252, 252, 252)">
-            <div>口味名（3个字内）口味标签</div>
-            <div class="taste">
-              <el-autocomplete
-                v-model="state"
-                class="inline-input"
-                :fetch-suggestions="querySearch"
-                placeholder="请输入口味"
-                @select="handleSelect"
-              />
-              <!-- 标签输入框 -->
-              <el-input
-                ref="inputTag"
-                v-model="currentval"
-                type="text"
-                class="tag-input"
-                @keyup.enter="addTags"
-                @keyup.delete="deleteags"
-              />
-              <!-- 生成的标签 -->
-              <div v-for="(item, index) in TagsAll" :key="index" class="el-tag">{{ item }}</div>
-              <span>删除</span>
+        <!-- 套餐菜品 -->
+        <el-form-item label="套餐菜品">
+          <el-button @click="show">+ 添加菜品</el-button>
+          <el-dialog title="添加菜品" :visible.sync="dialogAddDish">
+            <div class="addsetmeal">
+              <div class="dishdata" style="width: 20%">
+                <el-table
+                  :data="dishData"
+                  border
+                  :show-header="false"
+                  :header-cell-style="{ background: `${headerColor}` }"
+                  :cell-style="cellStyle"
+                  :cell-class-name="tableCellClassName"
+                  @cell-click="cellClick"
+                >
+                  <el-table-column prop="name" label="菜品" />
+                </el-table>
+              </div>
+              <div class="selectdish" style="width: 40%">
+                <div class="checkitems">
+                  <div v-if="checkshow">
+                    <el-checkbox
+                      v-for="item in selectDishdata"
+                      :key="item.name"
+                      border
+                      style="width: 200px"
+                      :true-label="item.name + '￥' + `${parseInt(item.price) / 100}`"
+                      :false-label="0"
+                      @change="handleCheck"
+                    >
+                      <label>
+                        <div class="items">
+                          <span>{{ item.name }}</span>
+                          <span>{{ item.status == 1 ? '在售' : '停售' }}</span>
+                          <span style="text-align: right">￥{{ parseInt(item.price) / 100 }}</span>
+                        </div>
+                      </label>
+                    </el-checkbox>
+                  </div>
+                  <div v-else class="nodish">暂无菜品！</div>
+                </div>
+              </div>
+              <div class="ritCont" style="width: 40%">
+                <div>已选菜品({{ selectall.length }})</div>
+                <div v-for="item in selectall" :key="item.name" class="items">
+                  <span>{{ item.name }}</span>
+                  <span>￥{{ item.price }}</span>
+                  <i class="el-icon-circle-close" @click="deleteitem" />
+                </div>
+              </div>
             </div>
-            <el-button type="primary">添加口味</el-button>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="dialogAddDish = false">取 消</el-button>
+              <el-button type="primary" @click="onAddDish">确 定</el-button>
+            </div>
+          </el-dialog>
+          <el-card v-show="addTaste" class="card-input" shadow="never" style="background-color: rgb(252, 252, 252)">
+            <el-button>+ 添加菜品</el-button>
+            <div>显示内容</div>
           </el-card>
         </el-form-item>
         <!-- 套餐图片 -->
@@ -83,7 +115,7 @@
 </template>
 
 <script>
-import { addDish, addDishCate } from '@/api/menu'
+import { getCateList, addSetmeal, getDishList } from '@/api/setmeal'
 import { uploadImage } from '@/api/common'
 
 export default {
@@ -96,13 +128,18 @@ export default {
         price: '',
         image: '',
         description: '',
-        flavors: [],
         categoryId: '',
         status: 1,
-        code: ''
+        code: '',
+        setmealDishes: []
       },
+      dishData: {
+        name: ''
+      },
+      selectDishdata: [{}],
       dialogVisible: false,
       disabled: false,
+      dialogAddDish: false,
       options: [{
         name: '',
         id: ''
@@ -115,7 +152,8 @@ export default {
           { required: true, message: '请输入套餐分类', trigger: 'blur' }
         ],
         price: [
-          { required: true, message: '请输入套餐价格', trigger: 'blur' }
+          { required: true, message: '请输入套餐价格', trigger: 'blur' },
+          { max: 10000, message: '套餐价格最大不能超过10000', trigger: 'blur' }
         ],
         image: [
           { required: true, message: '', trigger: 'blur' }
@@ -128,16 +166,33 @@ export default {
       currentval: '',
       TagsAll: '',
       value: '',
-      dialogVisibleimg: false
+      dialogVisibleimg: false,
+      headerColor: 'rgb(242,242,242)',
+      clickedRow: '',
+      clickedColumn: '',
+      checkshow: false,
+      selectall: [],
+      labels: []
     }
   },
   created() {
-    addDishCate({ type: 1 }).then(res => {
+    getCateList({ type: 1 }).then(res => {
+      // 菜品分类的所有结果
+      this.dishData = res.data
+      // 自动加载第一个菜品的dish，结果显示在弹出的对话框中
+      getDishList({ categoryId: res.data[0].id }).then(res => {
+        if (res.data.length === 0) {
+          this.checkshow = false
+        } else {
+          this.checkshow = true
+          this.selectDishdata = res.data
+        }
+      })
+    })
+    getCateList({ type: 2 }).then(res => {
+      // 套餐分类的所有结果
       this.options = res.data
     })
-  },
-  mounted() {
-    this.tastes = this.loadAll()
   },
   methods: {
     uploadImage(file) {
@@ -148,8 +203,10 @@ export default {
       })
     },
     show() {
-      this.tasteShow = !this.tasteShow
-      this.addTaste = !this.addTaste
+      this.dialogAddDish = true
+    },
+    onAddDish() {
+      this.dialogAddDish = false
     },
     querySearch(queryString, cb) {
       var tastes = this.tastes
@@ -162,14 +219,6 @@ export default {
         return (taste.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0)
       }
     },
-    loadAll() {
-      return [
-        { 'value': '甜味' },
-        { 'value': '温度' },
-        { 'value': '忌口' },
-        { 'value': '辣度' }
-      ]
-    },
     handleSelect(item) {
       console.log(item)
     },
@@ -180,7 +229,7 @@ export default {
       this.$refs['ruleForm'].validate((valid) => {
         if (valid) {
           // 数据保存至后端即可, 图片保存
-          addDish(this.ruleForm).then(() => {
+          addSetmeal(this.ruleForm).then(() => {
             this.$message.success('添加成功')
             this.$router.push({ path: '/setmeal' })
           }).catch(error => { console.log(error.response) })
@@ -192,7 +241,7 @@ export default {
     submitReset() {
       this.$refs['ruleForm'].validate((valid) => {
         if (valid) {
-          addDish(this.ruleForm).then(() => {
+          addSetmeal(this.ruleForm).then(() => {
             this.$message.success('添加成功')
             this.$refs['ruleForm'].resetFields()
           })
@@ -220,6 +269,52 @@ export default {
         return item.id === val
       })
       this.ruleForm.categoryId = obj.id
+    },
+    tableCellClassName({ row, column, rowIndex, columnIndex }) {
+      row.index = rowIndex
+      column.index = columnIndex
+    },
+    cellClick(row, column, cell, event) {
+      // 点击单元格，找到菜品的id，getDishList
+      // console.log(this.dishData[row.index].id)
+      getDishList({ categoryId: this.dishData[row.index].id }).then(res => {
+        if (res.data.length === 0) {
+          this.checkshow = false
+        } else {
+          this.checkshow = true
+          this.selectDishdata = res.data
+        }
+      })
+      this.clickedRow = row.index
+      this.clickedColumn = column.index
+    },
+    cellStyle({ row, column, rowIndex, columnIndex }) {
+      if (row.index === this.clickedRow && column.index === this.clickedColumn) {
+        return 'border:1px solid #409EFF; color: #409EFF'
+      } else if (columnIndex === 0) {
+        return ''
+      } else {
+        return ''
+      }
+    },
+    handleCheck(val) {
+      if (val !== 0) {
+        // 点击取值
+        const valarray = val.split('￥')
+        // this.selectall.push()
+        var obj = {}
+        obj.name = valarray[0]
+        obj.price = valarray[1]
+        console.log(obj)
+        this.selectall.push(obj)
+      } else {
+        // 删除右边的框
+        console.log(this.checked)
+      }
+    },
+    deleteitem() {
+      console.log('1111')
+      // 更改勾选状态且删除已选菜单的框
     }
   }
 }
@@ -292,5 +387,47 @@ export default {
   line-height: 148px;
   text-align: center;
 }
+.addsetmeal {
+    display: flex;
+}
+.el-table__row>td{ border: none; }
+
+.dishdata .el-table--enable-row-hover .el-table__body tr:hover > td {
+    background-color: #fff;
+    cursor: pointer;
+ }
+.ritCont {
+  margin-left: 20px;
+}
+.selectdish {
+  border: solid 1px #efefef;
+}
+.selectdish .checkitems {
+  padding: 15px 10px 10px 15px;
+}
+.selectdish .items span{
+  margin-right: 10px;
+}
+.ritCont {
+  overflow: hidden;
+  border: solid 1px #efefef;
+  padding: 10px 15px;
+}
+.nodish {
+  border: solid 1px #efefef;
+  padding: 0 15px;
+}
+.ritCont .items {
+  display: flex;
+  justify-content: space-between;
+  border: solid 1px #efefef;
+  padding-left: 10px;
+}
+.ritCont .items .el-icon-circle-close {
+  margin-top: 13px;
+  margin-right: 11px;
+  cursor: pointer;
+}
+
 </style>
 
