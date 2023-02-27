@@ -27,7 +27,7 @@
         </el-form-item>
         <!-- 套餐菜品 -->
         <el-form-item label="套餐菜品">
-          <el-button @click="show">+ 添加菜品</el-button>
+          <el-button v-show="addset" @click="show">+ 添加菜品</el-button>
           <el-dialog title="添加菜品" :visible.sync="dialogAddDish">
             <div class="addsetmeal">
               <div class="dishdata" style="width: 20%">
@@ -46,33 +46,32 @@
               <div class="selectdish" style="width: 40%">
                 <div class="checkitems">
                   <div v-if="checkshow">
-                    <el-checkbox
-                      v-for="item in selectDishdata"
-                      :key="item.name"
-                      border
-                      style="width: 200px"
-                      :true-label="item.name + '￥' + `${parseInt(item.price) / 100}`"
-                      :false-label="0"
-                      @change="handleCheck"
-                    >
-                      <label>
+                    <el-checkbox-group v-model="checkList">
+                      <el-checkbox
+                        v-for="item in selectDishdata"
+                        :key="item.name"
+                        border
+                        style="width: 200px"
+                        :label="item"
+                        @change="handleCheck"
+                      >
                         <div class="items">
                           <span>{{ item.name }}</span>
                           <span>{{ item.status == 1 ? '在售' : '停售' }}</span>
                           <span style="text-align: right">￥{{ parseInt(item.price) / 100 }}</span>
                         </div>
-                      </label>
-                    </el-checkbox>
+                      </el-checkbox>
+                    </el-checkbox-group>
                   </div>
                   <div v-else class="nodish">暂无菜品！</div>
                 </div>
               </div>
               <div class="ritCont" style="width: 40%">
                 <div>已选菜品({{ selectall.length }})</div>
-                <div v-for="item in selectall" :key="item.name" class="items">
+                <div v-for="item in selectall" :key="item.id" class="items">
                   <span>{{ item.name }}</span>
-                  <span>￥{{ item.price }}</span>
-                  <i class="el-icon-circle-close" @click="deleteitem" />
+                  <span>￥{{ parseInt(item.price) / 100 }}</span>
+                  <i class="el-icon-circle-close" @click="deleteitem(item)" />
                 </div>
               </div>
             </div>
@@ -81,9 +80,29 @@
               <el-button type="primary" @click="onAddDish">确 定</el-button>
             </div>
           </el-dialog>
-          <el-card v-show="addTaste" class="card-input" shadow="never" style="background-color: rgb(252, 252, 252)">
-            <el-button>+ 添加菜品</el-button>
-            <div>显示内容</div>
+          <el-card v-show="addshow" class="card-input" shadow="never" style="background-color: rgb(252, 252, 252)">
+            <el-button @click="show">+ 添加菜品</el-button>
+            <div>
+              <el-table :data="selectall" style="width: 100%">
+                <el-table-column prop="name" label="名称" width="180" />
+                <el-table-column prop="price" label="原价" width="90">
+                  <template slot-scope="scope">
+                    ￥{{ parseInt(scope.row.price) / 100 }}
+                  </template>
+                </el-table-column>
+                <el-table-column label="份数">
+                  <el-input-number v-model="num" :min="1" :max="10" label="描述文字" size="small" @change="handleChange" />
+                </el-table-column>
+                <el-table-column label="操作">
+                  <template slot-scope="scope">
+                    <el-button
+                      size="mini"
+                      @click="handleDel(scope.$index, scope.row)"
+                    >删除</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
           </el-card>
         </el-form-item>
         <!-- 套餐图片 -->
@@ -129,6 +148,8 @@ export default {
         image: '',
         description: '',
         categoryId: '',
+        id: '',
+        idType: '',
         status: 1,
         code: '',
         setmealDishes: []
@@ -159,8 +180,8 @@ export default {
           { required: true, message: '', trigger: 'blur' }
         ]
       },
-      tasteShow: true,
-      addTaste: false,
+      addset: true,
+      addshow: false,
       state: '',
       tastes: [],
       currentval: '',
@@ -172,7 +193,9 @@ export default {
       clickedColumn: '',
       checkshow: false,
       selectall: [],
-      labels: []
+      labels: [],
+      checkList: [],
+      num: 1
     }
   },
   created() {
@@ -204,8 +227,11 @@ export default {
     },
     show() {
       this.dialogAddDish = true
+      this.addshow = !this.addshow
+      this.addset = !this.addset
     },
     onAddDish() {
+      console.log(this.selectall)
       this.dialogAddDish = false
     },
     querySearch(queryString, cb) {
@@ -298,23 +324,16 @@ export default {
       }
     },
     handleCheck(val) {
-      if (val !== 0) {
-        // 点击取值
-        const valarray = val.split('￥')
-        // this.selectall.push()
-        var obj = {}
-        obj.name = valarray[0]
-        obj.price = valarray[1]
-        console.log(obj)
-        this.selectall.push(obj)
-      } else {
-        // 删除右边的框
-        console.log(this.checked)
-      }
+      // console.log(val)
+      // console.log(this.checkList)
+      this.selectall = this.checkList
     },
-    deleteitem() {
-      console.log('1111')
-      // 更改勾选状态且删除已选菜单的框
+    deleteitem(item) {
+      const delitem = this.selectall.indexOf(item)
+      this.selectall.splice(delitem, 1)
+    },
+    handleChange(value) {
+      console.log(value)
     }
   }
 }
