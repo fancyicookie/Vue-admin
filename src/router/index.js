@@ -73,25 +73,29 @@ export const constantRoutes = [
   },
 
   {
-    path: '/addemployee',
+    path: '/employee/add',
     component: Layout,
     children: [
       {
         path: '',
         name: 'AddEmployee',
-        component: () => import('@/views/addemployee/index')
+        component: () => import('@/views/employee/add'),
+        hidden: true,
+        meta: {
+          activeMenu: '/employee'
+        }
       }
     ]
   },
 
   {
-    path: '/editemployee',
+    path: '/employee/edit',
     component: Layout,
     children: [
       {
         path: '',
         name: 'EditEmployee',
-        component: () => import('@/views/editemployee/index'),
+        component: () => import('@/views/employee/edit'),
         hidden: true,
         meta: {
           activeMenu: '/employee'
@@ -127,25 +131,25 @@ export const constantRoutes = [
   },
 
   {
-    path: '/adddish',
+    path: '/menu/add',
     component: Layout,
     children: [
       {
         path: '',
         name: 'AddDish',
-        component: () => import('@/views/adddish/index')
+        component: () => import('@/views/menu/add')
       }
     ]
   },
 
   {
-    path: '/editdish',
+    path: '/menu/edit',
     component: Layout,
     children: [
       {
         path: '',
         name: 'EditDish',
-        component: () => import('@/views/editdish/index')
+        component: () => import('@/views/menu/edit')
       }
     ]
   },

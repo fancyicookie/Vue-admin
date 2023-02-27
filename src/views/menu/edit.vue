@@ -90,7 +90,7 @@
 import { addDish, addDishCate } from '@/api/menu'
 
 export default {
-  name: 'AddEmployee',
+  name: 'EditDish',
   data() {
     return {
       ruleForm: {
@@ -175,7 +175,7 @@ export default {
           // 数据保存至后端即可, 图片保存
           addDish(this.ruleForm).then(() => {
             this.$message.success('添加成功')
-            this.$router.push({ path: '/menu/index' })
+            this.$router.push({ path: '/menu' })
           })
         } else {
           return false

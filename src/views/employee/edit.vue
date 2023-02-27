@@ -84,7 +84,7 @@ export default {
   },
   methods: {
     cancel() {
-      this.$router.push({ path: '/employee/index' })
+      this.$router.push({ path: '/employee' })
     },
     // 提交保存修改
     onSubmit() {

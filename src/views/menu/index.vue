@@ -178,7 +178,7 @@ export default {
     },
     handleEdit(index, row) {
       console.log('edit')
-      this.$router.push({ path: '/editdish', query: { id: row.id }})
+      this.$router.push({ path: '/menu/edit', query: { id: row.id }})
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
@@ -240,7 +240,7 @@ export default {
       this.$message.success('菜品状态已经成功更改为停售状态！')
     },
     addDish() {
-      this.$router.push({ path: '/adddish' })
+      this.$router.push({ path: '/menu/add' })
     },
     handleStatus(index, row) {
       this.dialogStatus = true

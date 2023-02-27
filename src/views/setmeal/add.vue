@@ -152,7 +152,12 @@ export default {
         idType: '',
         status: 1,
         code: '',
-        setmealDishes: []
+        setmealDishes: [{
+          copies: 1,
+          dishId: '',
+          name: '',
+          price: ''
+        }]
       },
       dishData: {
         name: ''
@@ -177,6 +182,9 @@ export default {
           { max: 10000, message: '套餐价格最大不能超过10000', trigger: 'blur' }
         ],
         image: [
+          { required: true, message: '', trigger: 'blur' }
+        ],
+        setmealDishes: [
           { required: true, message: '', trigger: 'blur' }
         ]
       },
@@ -231,7 +239,7 @@ export default {
       this.addset = !this.addset
     },
     onAddDish() {
-      console.log(this.selectall)
+      // console.log(this.selectall)
       this.dialogAddDish = false
     },
     querySearch(queryString, cb) {
@@ -327,6 +335,7 @@ export default {
       // console.log(val)
       // console.log(this.checkList)
       this.selectall = this.checkList
+      this.setmealDishes = this.checkList
     },
     deleteitem(item) {
       const delitem = this.selectall.indexOf(item)

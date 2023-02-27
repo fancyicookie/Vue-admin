@@ -87,7 +87,7 @@ import { addDish, addDishCate } from '@/api/menu'
 import { uploadImage } from '@/api/common'
 
 export default {
-  name: 'AddEmployee',
+  name: 'AddDish',
   data() {
     return {
       env: process.env.VUE_APP_BASE_API,
