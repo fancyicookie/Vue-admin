@@ -333,7 +333,6 @@ export default {
     },
     handleCheck(val) {
       // console.log(val)
-      // console.log(this.checkList)
       this.selectall = this.checkList
       this.setmealDishes = this.checkList
     },
