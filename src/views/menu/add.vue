@@ -39,16 +39,35 @@
                 @select="handleSelect"
               />
               <!-- 标签输入框 -->
-              <el-input
+              <div
                 ref="inputTag"
-                v-model="currentval"
                 type="text"
+                contenteditable="true"
                 class="tag-input"
-                @keyup.enter="addTags"
-                @keyup.delete="deleteags"
-              />
-              <!-- 生成的标签 -->
-              <div v-for="(item, index) in TagsAll" :key="index" class="el-tag">{{ item }}</div>
+                @keyup.enter="addTags($event)"
+                @keydown="addTag($event)"
+              >
+                <!-- 生成的标签 -->
+                <el-tag
+                  v-for="tag in dynamicTags"
+                  :key="tag"
+                  closable
+                  :disable-transitions="false"
+                  @close="handleClose(tag)"
+                >
+                  {{ tag }}
+                </el-tag>
+                <el-input
+                  v-if="inputVisible"
+                  ref="saveTagInput"
+                  v-model="inputValue"
+                  class="input-new-tag"
+                  size="small"
+                  @keyup.enter.native="handleInputConfirm"
+                  @blur="handleInputConfirm"
+                />
+                <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
+              </div>
               <span>删除</span>
             </div>
             <el-button type="primary">添加口味</el-button>
@@ -126,7 +145,7 @@ export default {
       state: '',
       tastes: [],
       currentval: '',
-      TagsAll: '',
+      tagsAll: [],
       value: '',
       dialogVisibleimg: false
     }
@@ -201,8 +220,13 @@ export default {
         }
       })
     },
-    addTags() {
+    addTags(e) {
+      // e.preventDefault()
       console.log('addtags')
+      console.log(this.$refs.inputTag)
+    },
+    addTag(e) {
+      e.preventDefault()
     },
     handleLimit(file, fileList) {
       if (fileList.length >= 1) {
@@ -272,8 +296,12 @@ export default {
   margin-right: 10px;
 }
 .taste .tag-input {
+  border: solid 1px rgb(207, 205, 205);
+  border-radius: 5px;
+  background-color: #fff;
   width: 400px;
   margin-right: 10px;
+  padding: 1px;
 }
 
 .disabled .el-upload.el-upload--picture-card {

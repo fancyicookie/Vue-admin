@@ -95,7 +95,7 @@ export default {
           edit(this.ruleForm).then(() => {
             this.$message.success('修改成功')
             this.$refs['ruleForm'].resetFields()
-            this.$router.push({ path: '/employee/index' })
+            this.$router.push({ path: '/employee' })
           })
         } else {
           return false

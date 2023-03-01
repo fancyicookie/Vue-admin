@@ -155,6 +155,7 @@ export default {
   methods: {
     onSearch() {
       if (this.search.length === 0) {
+        this.fetchData()
         this.showList = this.tableList
       } else {
         this.tableList = this.tableList.filter(data => {

@@ -106,6 +106,7 @@ export default {
     },
     searchNames() {
       if (this.searchName.length === 0) {
+        this.fetchData()
         this.showList = this.tableList
       } else {
         this.tableList = this.tableList.filter(data => {
