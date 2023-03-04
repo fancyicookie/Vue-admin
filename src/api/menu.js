@@ -20,6 +20,21 @@ export function addDish(data) {
   })
 }
 
+export function editDish(id) {
+  return request({
+    url: '/dish/' + id,
+    method: 'get'
+  })
+}
+
+export function putDish(data) {
+  return request({
+    url: '/dish',
+    method: 'put',
+    data
+  })
+}
+
 export function addDishCate(params) {
   return request({
     url: '/category/list',

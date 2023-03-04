@@ -178,8 +178,8 @@ export default {
           { required: true, message: '请输入套餐分类', trigger: 'blur' }
         ],
         price: [
-          { required: true, message: '请输入套餐价格', trigger: 'blur' },
-          { max: 10000, message: '套餐价格最大不能超过10000', trigger: 'blur' }
+          { required: true, message: '请输入套餐价格', trigger: 'blur' }
+          // { max: 10000, message: '套餐价格最大不能超过10000', trigger: 'blur' }
         ],
         image: [
           { required: true, message: '', trigger: 'blur' }
@@ -262,7 +262,7 @@ export default {
     onSubmit() {
       this.$refs['ruleForm'].validate((valid) => {
         if (valid) {
-          // 数据保存至后端即可, 图片保存
+          // 数据保存至后端即可，数据格式问题
           addSetmeal(this.ruleForm).then(() => {
             this.$message.success('添加成功')
             this.$router.push({ path: '/setmeal' })

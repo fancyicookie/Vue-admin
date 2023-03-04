@@ -42,10 +42,7 @@
               <div
                 ref="inputTag"
                 type="text"
-                contenteditable="true"
                 class="tag-input"
-                @keyup.enter="addTags($event)"
-                @keydown="addTag($event)"
               >
                 <!-- 生成的标签 -->
                 <el-tag
@@ -66,9 +63,9 @@
                   @keyup.enter.native="handleInputConfirm"
                   @blur="handleInputConfirm"
                 />
-                <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
+                <el-button v-else class="button-new-tag" size="small" @click="showInput">+</el-button>
               </div>
-              <span>删除</span>
+              <span class="tasteDel">删除</span>
             </div>
             <el-button type="primary">添加口味</el-button>
           </el-card>
@@ -147,7 +144,10 @@ export default {
       currentval: '',
       tagsAll: [],
       value: '',
-      dialogVisibleimg: false
+      dialogVisibleimg: false,
+      dynamicTags: [],
+      inputVisible: false,
+      inputValue: ''
     }
   },
   created() {
@@ -220,14 +220,6 @@ export default {
         }
       })
     },
-    addTags(e) {
-      // e.preventDefault()
-      console.log('addtags')
-      console.log(this.$refs.inputTag)
-    },
-    addTag(e) {
-      e.preventDefault()
-    },
     handleLimit(file, fileList) {
       if (fileList.length >= 1) {
         this.eqObj.uploadDisabled = true
@@ -244,6 +236,23 @@ export default {
         return item.id === val
       })
       this.ruleForm.categoryId = obj.id
+    },
+    handleClose(tag) {
+      this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1)
+    },
+    showInput() {
+      this.inputVisible = true
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus()
+      })
+    },
+    handleInputConfirm() {
+      const inputValue = this.inputValue
+      if (inputValue) {
+        this.dynamicTags.push(inputValue)
+      }
+      this.inputVisible = false
+      this.inputValue = ''
     }
   }
 }
@@ -302,6 +311,10 @@ export default {
   width: 400px;
   margin-right: 10px;
   padding: 1px;
+}
+
+.tasteDel {
+  cursor: pointer;
 }
 
 .disabled .el-upload.el-upload--picture-card {

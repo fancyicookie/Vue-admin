@@ -87,7 +87,7 @@
 </template>
 
 <script>
-import { addDish, addDishCate } from '@/api/menu'
+import { addDish, addDishCate, editDish } from '@/api/menu'
 
 export default {
   name: 'EditDish',
@@ -95,6 +95,7 @@ export default {
     return {
       ruleForm: {
         name: '',
+        categoryId: '',
         categoryName: '',
         price: '',
         image: '',
@@ -134,6 +135,9 @@ export default {
   created() {
     addDishCate({ type: 1 }).then(res => {
       this.options = res.data
+    })
+    editDish(this.$route.query.id).then(res => {
+      this.ruleForm = res.data
     })
   },
   mounted() {
