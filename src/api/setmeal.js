@@ -59,3 +59,9 @@ export function addSetmeal(data) {
   })
 }
 
+export function editSetmeal(id) {
+  return request({
+    url: '/setmeal/' + id,
+    method: 'get'
+  })
+}

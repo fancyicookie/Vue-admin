@@ -134,7 +134,7 @@
 </template>
 
 <script>
-import { getCateList, addSetmeal, getDishList } from '@/api/setmeal'
+import { getCateList, addSetmeal, getDishList, editSetmeal } from '@/api/setmeal'
 import { uploadImage } from '@/api/common'
 
 export default {
@@ -222,6 +222,9 @@ export default {
     getCateList({ type: 2 }).then(res => {
       // 套餐分类的所有结果
       this.options = res.data
+    })
+    editSetmeal(this.$route.query.id).then(res => {
+      this.ruleForm = res.data
     })
   },
   methods: {

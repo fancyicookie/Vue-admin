@@ -178,7 +178,7 @@ export default {
     },
     handleEdit(index, row) {
       console.log('edit')
-      this.$router.push({ path: '/editdish', query: { id: row.id }})
+      this.$router.push({ path: '/setmeal/edit', query: { id: row.id }})
     },
     handleSelectionChange(val) {
       this.multipleSelection = val

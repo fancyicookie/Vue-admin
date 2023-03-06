@@ -166,6 +166,7 @@ export const constantRoutes = [
       }
     ]
   },
+
   {
     path: '/setmeal/add',
     component: Layout,
@@ -174,6 +175,20 @@ export const constantRoutes = [
         path: '',
         name: 'AddSetmeal',
         component: () => import('@/views/setmeal/add'),
+        meta: { title: '套餐管理', icon: 'el-icon-present' },
+        hidden: true
+      }
+    ]
+  },
+
+  {
+    path: '/setmeal/edit',
+    component: Layout,
+    children: [
+      {
+        path: '',
+        name: 'EditSetmeal',
+        component: () => import('@/views/setmeal/edit'),
         meta: { title: '套餐管理', icon: 'el-icon-present' },
         hidden: true
       }
