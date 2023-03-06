@@ -124,8 +124,6 @@
           <el-button @click="cancel">取消</el-button>
           <!-- 跳转页面并显示 -->
           <el-button type="primary" @click="onSubmit">保存</el-button>
-          <!-- 不跳转页面，输入框为空 -->
-          <el-button type="primary" @click="submitReset">保存并继续添加</el-button>
         </el-form-item>
       </el-form>
     </div>
