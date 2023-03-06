@@ -48,7 +48,7 @@
         <!-- 多行数据的复选框 -->
         <el-table ref="multipleTable" :data="tableList" stripe border style="width: 100%" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55" />
-          <el-table-column prop="name" label="菜品名称" width="180" />
+          <el-table-column prop="name" label="套餐名称" width="180" />
           <el-table-column prop="image" label="图片" width="90">
             <template slot-scope="scope">
               <el-image style="width: 40px" :src="`${commonImaggeBaseUrl}${scope.row.image}/`">
@@ -58,7 +58,7 @@
               </el-image>
             </template>
           </el-table-column>
-          <el-table-column prop="categoryName" label="菜品分类" width="90" />
+          <el-table-column prop="categoryName" label="套餐分类" width="90" />
           <el-table-column prop="price" label="售价" width="90">
             <template slot-scope="scope">
               ￥{{ parseInt(scope.row.price) / 100 }}

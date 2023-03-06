@@ -27,7 +27,6 @@
         </el-form-item>
         <!-- 套餐菜品 -->
         <el-form-item label="套餐菜品">
-          <el-button v-show="addset" @click="show">+ 添加菜品</el-button>
           <el-dialog title="添加菜品" :visible.sync="dialogAddDish">
             <div class="addsetmeal">
               <div class="dishdata" style="width: 20%">
@@ -67,8 +66,8 @@
                 </div>
               </div>
               <div class="ritCont" style="width: 40%">
-                <div>已选菜品({{ selectall.length }})</div>
-                <div v-for="item in selectall" :key="item.id" class="items">
+                <div>已选菜品({{ ruleForm.setmealDishes.length }})</div>
+                <div v-for="item in ruleForm.setmealDishes" :key="item.id" class="items">
                   <span>{{ item.name }}</span>
                   <span>￥{{ parseInt(item.price) / 100 }}</span>
                   <i class="el-icon-circle-close" @click="deleteitem(item)" />
@@ -80,10 +79,10 @@
               <el-button type="primary" @click="onAddDish">确 定</el-button>
             </div>
           </el-dialog>
-          <el-card v-show="addshow" class="card-input" shadow="never" style="background-color: rgb(252, 252, 252)">
+          <el-card class="card-input" shadow="never" style="background-color: rgb(252, 252, 252)">
             <el-button @click="show">+ 添加菜品</el-button>
             <div>
-              <el-table :data="selectall" style="width: 100%">
+              <el-table :data="ruleForm.setmealDishes" style="width: 100%">
                 <el-table-column prop="name" label="名称" width="180" />
                 <el-table-column prop="price" label="原价" width="90">
                   <template slot-scope="scope">
@@ -134,7 +133,7 @@
 </template>
 
 <script>
-import { getCateList, addSetmeal, getDishList, editSetmeal } from '@/api/setmeal'
+import { getCateList, addSetmeal, getDishList, editSetmeal, putSetmeal } from '@/api/setmeal'
 import { uploadImage } from '@/api/common'
 
 export default {
@@ -199,7 +198,6 @@ export default {
       clickedRow: '',
       clickedColumn: '',
       checkshow: false,
-      selectall: [],
       labels: [],
       checkList: [],
       num: 1
@@ -224,6 +222,7 @@ export default {
       this.options = res.data
     })
     editSetmeal(this.$route.query.id).then(res => {
+      console.log(res.data)
       this.ruleForm = res.data
     })
   },
@@ -241,12 +240,8 @@ export default {
       this.addset = !this.addset
     },
     onAddDish() {
-      // console.log(this.selectall)
       this.dialogAddDish = false
-      console.log(this.selectall)
       this.ruleForm.idType = this.ruleForm.categoryId
-      this.ruleForm.setmealDishes = this.selectall
-      console.log(this.ruleForm)
     },
     querySearch(queryString, cb) {
       var tastes = this.tastes
@@ -269,7 +264,7 @@ export default {
       this.$refs['ruleForm'].validate((valid) => {
         if (valid) {
           // 数据保存至后端即可，数据格式问题
-          addSetmeal(this.ruleForm).then(() => {
+          putSetmeal(this.ruleForm).then(() => {
             this.$message.success('添加成功')
             this.$router.push({ path: '/setmeal' })
           }).catch(error => { console.log(error.response) })
@@ -341,12 +336,12 @@ export default {
     },
     handleCheck() {
       // console.log(val)
-      this.selectall = this.checkList
+      this.ruleForm.setmealDishes = this.checkList
     },
     deleteitem(item) {
-      const delitem = this.selectall.indexOf(item)
+      const delitem = this.ruleForm.setmealDishes.indexOf(item)
       // 删除数组中的一项
-      this.selectall.splice(delitem, 1)
+      this.ruleForm.setmealDishes.splice(delitem, 1)
     },
     handleChange(value) {
       console.log(value)

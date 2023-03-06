@@ -11,19 +11,19 @@
           <el-input v-model="ruleForm.name" placeholder="请填写菜品名称" />
         </el-form-item>
         <!-- 菜品分类 -->
-        <el-form-item prop="type" label="菜品分类">
-          <el-select v-model="value" placeholder="请选择菜品分类">
+        <el-form-item prop="categoryName" label="菜品分类">
+          <el-select v-model="ruleForm.categoryName" placeholder="请选择菜品分类" @change="getCategoryId">
             <el-option
               v-for="item in options"
               :key="item.id"
               :label="item.name"
-              :value="item.name"
+              :value="item.id"
             />
           </el-select>
         </el-form-item>
         <!-- 菜品价格 -->
         <el-form-item prop="price" label="菜品价格">
-          <el-input v-model="ruleForm.price" placeholder="请设置菜品价格" />
+          <el-input v-model.number="ruleForm.price" placeholder="请设置菜品价格" />
         </el-form-item>
         <!-- 口味做法配置 -->
         <el-form-item label="口味做法配置">
@@ -39,17 +39,33 @@
                 @select="handleSelect"
               />
               <!-- 标签输入框 -->
-              <el-input
+              <div
                 ref="inputTag"
-                v-model="currentval"
                 type="text"
                 class="tag-input"
-                @keyup.enter="addTags"
-                @keyup.delete="deleteags"
-              />
-              <!-- 生成的标签 -->
-              <div v-for="(item, index) in TagsAll" :key="index" class="el-tag">{{ item }}</div>
-              <span>删除</span>
+              >
+                <!-- 生成的标签 -->
+                <el-tag
+                  v-for="tag in dynamicTags"
+                  :key="tag"
+                  closable
+                  :disable-transitions="false"
+                  @close="handleClose(tag)"
+                >
+                  {{ tag }}
+                </el-tag>
+                <el-input
+                  v-if="inputVisible"
+                  ref="saveTagInput"
+                  v-model="inputValue"
+                  class="input-new-tag"
+                  size="small"
+                  @keyup.enter.native="handleInputConfirm"
+                  @blur="handleInputConfirm"
+                />
+                <el-button v-else class="button-new-tag" size="small" @click="showInput">+</el-button>
+              </div>
+              <span class="tasteDel">删除</span>
             </div>
             <el-button type="primary">添加口味</el-button>
           </el-card>
@@ -57,29 +73,25 @@
         <!-- 菜品图片 -->
         <el-form-item prop="image" label="菜品图片">
           <el-upload
-            action="/file/Upload?module=EQ"
-            accept="image/jpeg,image/jpg,image/png"
-            :limit="1"
-            :on-change="handleLimit"
+            action="/"
             list-type="picture-card"
-            :on-success="handleSuccess"
-            :on-remove="handleRemove"
+            :show-file-list="false"
+            :http-request="uploadImage"
           >
-            <i class="el-icon-plus" />
+            <img v-if="ruleForm.image" :src="`${env}/common/download?name=${ruleForm.image}`" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon" />
           </el-upload>
-          <!-- 预览图片 -->
-          <el-dialog :visible.sync="dialogVisibleimg" append-to-body>
-            <img width="100%" :src="dialogImageUrl" alt="">
-          </el-dialog>
         </el-form-item>
         <el-form-item prop="description" label="菜品描述">
-          <el-input type="textarea" placeholder="请输入菜品描述，最多200字" />
+          <el-input v-model="ruleForm.description" type="textarea" placeholder="请输入菜品描述，最多200字" />
         </el-form-item>
         <!-- 按钮 -->
         <el-form-item>
           <el-button @click="cancel">取消</el-button>
           <!-- 跳转页面并显示 -->
           <el-button type="primary" @click="onSubmit">保存</el-button>
+          <!-- 不跳转页面，输入框为空 -->
+          <el-button type="primary" @click="submitReset">保存并继续添加</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -87,21 +99,24 @@
 </template>
 
 <script>
-import { addDish, addDishCate, editDish } from '@/api/menu'
+import { addDish, addDishCate, editDish, putDish } from '@/api/menu'
+import { uploadImage } from '@/api/common'
 
 export default {
-  name: 'EditDish',
+  name: 'AddDish',
   data() {
     return {
+      env: process.env.VUE_APP_BASE_API,
       ruleForm: {
         name: '',
-        categoryId: '',
-        categoryName: '',
         price: '',
         image: '',
-        description: ''
+        description: '',
+        flavors: [],
+        categoryId: '',
+        status: 1,
+        code: ''
       },
-      dialogImageUrl: '',
       dialogVisible: false,
       disabled: false,
       options: [{
@@ -112,7 +127,7 @@ export default {
         name: [
           { required: true, message: '请输入菜品名称', trigger: 'blur' }
         ],
-        type: [
+        categoryName: [
           { required: true, message: '请输入菜品分类', trigger: 'blur' }
         ],
         price: [
@@ -127,9 +142,12 @@ export default {
       state: '',
       tastes: [],
       currentval: '',
-      TagsAll: '',
+      tagsAll: [],
       value: '',
-      dialogVisibleimg: false
+      dialogVisibleimg: false,
+      dynamicTags: [],
+      inputVisible: false,
+      inputValue: ''
     }
   },
   created() {
@@ -144,6 +162,13 @@ export default {
     this.tastes = this.loadAll()
   },
   methods: {
+    uploadImage(file) {
+      const formData = new FormData()
+      formData.append('file', file.file)
+      uploadImage(formData).then((res) => {
+        this.ruleForm.image = res.data
+      })
+    },
     show() {
       this.tasteShow = !this.tasteShow
       this.addTaste = !this.addTaste
@@ -177,10 +202,10 @@ export default {
       this.$refs['ruleForm'].validate((valid) => {
         if (valid) {
           // 数据保存至后端即可, 图片保存
-          addDish(this.ruleForm).then(() => {
+          putDish(this.ruleForm).then(() => {
             this.$message.success('添加成功')
             this.$router.push({ path: '/menu' })
-          })
+          }).catch(error => { console.log(error.response) })
         } else {
           return false
         }
@@ -198,9 +223,6 @@ export default {
         }
       })
     },
-    addTags() {
-      console.log('addtags')
-    },
     handleLimit(file, fileList) {
       if (fileList.length >= 1) {
         this.eqObj.uploadDisabled = true
@@ -211,15 +233,29 @@ export default {
       }
       this.$forceUpdate()
     },
-    handleSuccess(response, file, fileList) {
-      if (response.success) {
-        this.eqForm.image = response.filepath
-      }
+    getCategoryId(val) {
+      var obj = {}
+      obj = this.options.find(function(item) {
+        return item.id === val
+      })
+      this.ruleForm.categoryId = obj.id
     },
-    handleRemove(file, fileList) {
-      console.log(file, fileList)
-      this.eqObj.uploadDisabled = false
-      this.$forceUpdate()
+    handleClose(tag) {
+      this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1)
+    },
+    showInput() {
+      this.inputVisible = true
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus()
+      })
+    },
+    handleInputConfirm() {
+      const inputValue = this.inputValue
+      if (inputValue) {
+        this.dynamicTags.push(inputValue)
+      }
+      this.inputVisible = false
+      this.inputValue = ''
     }
   }
 }
@@ -250,14 +286,15 @@ export default {
 .avatar-uploader-icon {
     font-size: 28px;
     color: #8c939d;
-    width: 178px;
-    height: 178px;
-    line-height: 178px;
+    width: 128px;
+    height: 128px;
+    line-height: 128px;
     text-align: center;
   }
 .avatar {
-    width: 178px;
-    height: 178px;
+    width: 146px;
+    height: 146px;
+    border-radius: 2px;
     display: block;
   }
 .card-input {
@@ -271,8 +308,16 @@ export default {
   margin-right: 10px;
 }
 .taste .tag-input {
+  border: solid 1px rgb(207, 205, 205);
+  border-radius: 5px;
+  background-color: #fff;
   width: 400px;
   margin-right: 10px;
+  padding: 1px;
+}
+
+.tasteDel {
+  cursor: pointer;
 }
 
 .disabled .el-upload.el-upload--picture-card {
@@ -283,5 +328,13 @@ export default {
   display: none !important;
 }
 
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 148px;
+  height: 148px;
+  line-height: 148px;
+  text-align: center;
+}
 </style>
 
