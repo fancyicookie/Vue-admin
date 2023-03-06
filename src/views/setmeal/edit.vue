@@ -220,7 +220,7 @@ export default {
       })
     })
     getCateList({ type: 2 }).then(res => {
-      // 套餐分类的所有结果
+      // 套餐分类的所有结果1
       this.options = res.data
     })
     editSetmeal(this.$route.query.id).then(res => {
