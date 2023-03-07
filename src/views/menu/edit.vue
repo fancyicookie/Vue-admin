@@ -12,7 +12,7 @@
         </el-form-item>
         <!-- 菜品分类 -->
         <el-form-item prop="categoryName" label="菜品分类">
-          <el-select v-model="ruleForm.categoryName" placeholder="请选择菜品分类" @change="getCategoryId">
+          <el-select v-model="ruleForm.categoryId" placeholder="请选择菜品分类">
             <el-option
               v-for="item in options"
               :key="item.id"
@@ -27,45 +27,38 @@
         </el-form-item>
         <!-- 口味做法配置 -->
         <el-form-item label="口味做法配置">
-          <el-button v-show="tasteShow" @click="show">+ 添加口味</el-button>
-          <el-card v-show="addTaste" class="card-input" shadow="never" style="background-color: rgb(252, 252, 252)">
-            <div>口味名（3个字内）口味标签</div>
+          <el-button v-if="!ruleForm.flavors.length" @click="show">+ 添加口味</el-button>
+          <el-card v-if="ruleForm.flavors.length" class="card-input" shadow="never" style="background-color: rgb(252, 252, 252)">
             <div class="taste">
-              <el-autocomplete
-                v-model="state"
-                class="inline-input"
-                :fetch-suggestions="querySearch"
-                placeholder="请输入口味"
-                @select="handleSelect"
-              />
-              <!-- 标签输入框 -->
-              <div
-                ref="inputTag"
-                type="text"
-                class="tag-input"
-              >
-                <!-- 生成的标签 -->
-                <el-tag
-                  v-for="tag in dynamicTags"
-                  :key="tag"
-                  closable
-                  :disable-transitions="false"
-                  @close="handleClose(tag)"
+              <div>口味名（3个字内）口味标签</div>
+              <div v-for="(i, index) in ruleForm.flavors" :key="index" class="item">
+                <el-select v-model="ruleForm.flavors[index]" value-key="name" placeholder="请选择">
+                  <el-option
+                    v-for="k in options1"
+                    :key="k.name"
+                    :label="k.name"
+                    :value="k"
+                  />
+                </el-select>
+                <!-- 标签输入框 -->
+                <div
+                  ref="inputTag"
+                  type="text"
+                  class="tag-input"
                 >
-                  {{ tag }}
-                </el-tag>
-                <el-input
-                  v-if="inputVisible"
-                  ref="saveTagInput"
-                  v-model="inputValue"
-                  class="input-new-tag"
-                  size="small"
-                  @keyup.enter.native="handleInputConfirm"
-                  @blur="handleInputConfirm"
-                />
-                <el-button v-else class="button-new-tag" size="small" @click="showInput">+</el-button>
+                  <!-- 生成的标签 -->
+                  <el-tag
+                    v-for="tag in ruleForm.flavors[index].value"
+                    :key="tag"
+                    closable
+                    @close="handleClose(tag)"
+                  >
+                    {{ tag }}
+                  </el-tag>
+                </div>
+                <span class="tasteDel">删除</span>
               </div>
-              <span class="tasteDel">删除</span>
+
             </div>
             <el-button type="primary">添加口味</el-button>
           </el-card>
@@ -99,11 +92,18 @@
 <script>
 import { addDish, addDishCate, editDish, putDish } from '@/api/menu'
 import { uploadImage } from '@/api/common'
-
+const options1 = [
+  { name: '甜味', value: ['无糖'] },
+  { name: '温度', value: ['热饮 '] },
+  { name: '忌口', value: ['不要葱'] },
+  { name: '辣度', value: ['不辣 '] }
+]
 export default {
   name: 'AddDish',
   data() {
     return {
+      options1,
+      value: '',
       env: process.env.VUE_APP_BASE_API,
       ruleForm: {
         name: '',
@@ -135,15 +135,10 @@ export default {
           { required: true, message: '', trigger: 'blur' }
         ]
       },
-      tasteShow: true,
-      addTaste: false,
-      state: '',
       tastes: [],
       currentval: '',
       tagsAll: [],
-      value: '',
       dialogVisibleimg: false,
-      dynamicTags: [],
       inputVisible: false,
       inputValue: ''
     }
@@ -153,11 +148,14 @@ export default {
       this.options = res.data
     })
     editDish(this.$route.query.id).then(res => {
-      this.ruleForm = res.data
+      const flavors = res.data.flavors.map(item => {
+        return {
+          ...item,
+          value: JSON.parse(item.value)
+        }
+      })
+      this.ruleForm = { ...res.data, flavors }
     })
-  },
-  mounted() {
-    this.tastes = this.loadAll()
   },
   methods: {
     uploadImage(file) {
@@ -168,30 +166,14 @@ export default {
       })
     },
     show() {
-      this.tasteShow = !this.tasteShow
-      this.addTaste = !this.addTaste
-    },
-    querySearch(queryString, cb) {
-      var tastes = this.tastes
-      var results = queryString ? tastes.filter(this.createFilter(queryString)) : tastes
-      // 调用 callback 返回建议列表的数据
-      cb(results)
+      if (!this.ruleForm.flavors.length) {
+        this.ruleForm.flavors.push({ name: '甜味', value: ['无糖'] })
+      }
     },
     createFilter(queryString) {
       return (taste) => {
         return (taste.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0)
       }
-    },
-    loadAll() {
-      return [
-        { 'value': '甜味' },
-        { 'value': '温度' },
-        { 'value': '忌口' },
-        { 'value': '辣度' }
-      ]
-    },
-    handleSelect(item) {
-      console.log(item)
     },
     cancel() {
       this.$router.push({ path: '/menu' })
@@ -230,30 +212,6 @@ export default {
         this.$set(this.eqObj, 'uploadDisabled', false)
       }
       this.$forceUpdate()
-    },
-    getCategoryId(val) {
-      var obj = {}
-      obj = this.options.find(function(item) {
-        return item.id === val
-      })
-      this.ruleForm.categoryId = obj.id
-    },
-    handleClose(tag) {
-      this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1)
-    },
-    showInput() {
-      this.inputVisible = true
-      this.$nextTick(_ => {
-        this.$refs.saveTagInput.$refs.input.focus()
-      })
-    },
-    handleInputConfirm() {
-      const inputValue = this.inputValue
-      if (inputValue) {
-        this.dynamicTags.push(inputValue)
-      }
-      this.inputVisible = false
-      this.inputValue = ''
     }
   }
 }
@@ -298,9 +256,10 @@ export default {
 .card-input {
   width: 700px;
 }
-.taste {
+
+.taste .item {
   display: flex;
-  margin-bottom: 10px;
+  justify-content: space-between;
 }
 .taste .inline-input {
   margin-right: 10px;

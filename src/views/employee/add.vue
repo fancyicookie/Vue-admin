@@ -53,7 +53,7 @@ export default {
         username: '',
         name: '',
         phone: '',
-        sex: '',
+        sex: '1',
         idNumber: ''
       },
       rules: {
