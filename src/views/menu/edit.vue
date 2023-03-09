@@ -78,7 +78,6 @@
         <el-form-item prop="description" label="菜品描述">
           <el-input v-model="ruleForm.description" type="textarea" placeholder="请输入菜品描述，最多200字" />
         </el-form-item>
-        <!-- 按钮 -->
         <el-form-item>
           <el-button @click="cancel">取消</el-button>
           <!-- 跳转页面并显示 -->
