@@ -137,7 +137,11 @@ export const constantRoutes = [
       {
         path: '',
         name: 'AddDish',
-        component: () => import('@/views/menu/add')
+        component: () => import('@/views/menu/add'),
+        hidden: true,
+        meta: {
+          activeMenu: '/menu'
+        }
       }
     ]
   },
@@ -149,7 +153,11 @@ export const constantRoutes = [
       {
         path: '',
         name: 'EditDish',
-        component: () => import('@/views/menu/edit')
+        component: () => import('@/views/menu/edit'),
+        hidden: true,
+        meta: {
+          activeMenu: '/menu'
+        }
       }
     ]
   },
@@ -175,7 +183,7 @@ export const constantRoutes = [
         path: '',
         name: 'AddSetmeal',
         component: () => import('@/views/setmeal/add'),
-        meta: { title: '套餐管理', icon: 'el-icon-present' },
+        meta: { title: '套餐管理', icon: 'el-icon-present', activeMenu: '/setmeal' },
         hidden: true
       }
     ]
@@ -189,7 +197,7 @@ export const constantRoutes = [
         path: '',
         name: 'EditSetmeal',
         component: () => import('@/views/setmeal/edit'),
-        meta: { title: '套餐管理', icon: 'el-icon-present' },
+        meta: { title: '套餐管理', icon: 'el-icon-present', activeMenu: '/setmeal' },
         hidden: true
       }
     ]
